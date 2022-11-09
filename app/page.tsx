@@ -1,46 +1,25 @@
-import { demos } from '#/lib/demos';
-import Link from 'next/link';
+import { Boundary } from '../ui/Boundary';
+import ClientComponent from './ClientComponent';
+import superjson from 'superjson';
 
 export default function Page() {
+  const dates = [1, 2, 3, 4].map((int, index) => {
+    return new Date(2020, 11, 25 + index, 0, 0, 0);
+  });
+  const date = new Date();
+
   return (
-    <div className="space-y-6">
-      <div className="space-y-8 text-white">
-        {demos
-          .filter((section) =>
-            section?.items?.some((x) => typeof x.isDisabled === 'undefined'),
-          )
-          .map((section) => {
-            return (
-              <div key={section.name} className="space-y-3">
-                <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  {section.name}
-                </div>
-
-                <div className="grid grid-cols-2 gap-5">
-                  {section.items
-                    .filter((item) => !item.isDisabled)
-                    .map((item) => {
-                      return (
-                        <Link
-                          href={`/${item.slug}`}
-                          key={item.name}
-                          className="block space-y-1.5 rounded-lg border border-white/10 px-4 py-3 hover:border-white/20"
-                        >
-                          <div>{item.name}</div>
-
-                          {item.description ? (
-                            <div className="line-clamp-3 text-sm text-gray-400">
-                              {item.description}
-                            </div>
-                          ) : null}
-                        </Link>
-                      );
-                    })}
-                </div>
-              </div>
-            );
-          })}
-      </div>
-    </div>
+    <Boundary
+      labels={['Server Component Boundary']}
+      size="small"
+      animateRerendering={false}
+    >
+      <>
+        {dates.map((date) => {
+          const dateJsonString = superjson.stringify(date);
+          return <ClientComponent key={dateJsonString} date={dateJsonString} />;
+        })}
+      </>
+    </Boundary>
   );
 }
